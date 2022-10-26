@@ -1,24 +1,26 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { api } from "../../infrastructure/http/api";
-import { resetUsers, setUsers } from "../../infrastructure/store/slices/users";
-import { useReduxDispatch } from "./useReduxDispatch";
-import { useReduxSelector } from "./useReduxSelector";
+import { UsersContext } from "../../infrastructure/store/contexts/users";
 
 export const useUsers = () => {
-  const dispatch = useReduxDispatch()
-  const users = useReduxSelector(state => state.users.value)
+  const context = useContext(UsersContext)
+
+  if (!context) {
+    throw new Error('useUsers must be used within an UsersProvider');
+  }
+  const { dispatch, users } = context;
 
   useEffect (() => {
     async function getUsers() {
       const response = await api.get('/users');
 
-      dispatch(setUsers(response.data))
+      dispatch({ type: "setUsers", payload: response.data })
     }
 
     getUsers();
 
     return () => {
-      dispatch(resetUsers())
+      dispatch({type: "resetUsers", payload: []})
     }
   }, [dispatch]);
 

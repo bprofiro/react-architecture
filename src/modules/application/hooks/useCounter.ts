@@ -1,24 +1,28 @@
-import { decrementCounter, incrementCounter, randomIncrementCounter, resetCounter } from "../../infrastructure/store/slices/counter"
-import { useReduxDispatch } from "./useReduxDispatch"
-import { useReduxSelector } from "./useReduxSelector"
+import { useContext } from "react"
+import { CounterContext } from "../../infrastructure/store/contexts/counter"
 
 export const useCounter = () => {
-  const dispatch = useReduxDispatch()
-  const counter = useReduxSelector(state => state.counter.value)
+  const context = useContext(CounterContext)
 
-  const increment = () => dispatch(incrementCounter())
-  const decrement = () => dispatch(decrementCounter())
-  const reset = () => dispatch(resetCounter())
+  if (!context) {
+    throw new Error('useCounter must be used within an CounterProvider');
+  }
+
+  const { count, dispatch } = context
+
+  const increment = () => dispatch({ type: "incrementCounter" })
+  const decrement = () => dispatch({ type: "decrementCounter" })
+  const reset = () => dispatch({ type: "resetCounter" })
 
   const randomIncrement = () => {
     const randomNumber = Math.floor(Math.random() * (10 - 1 + 1)) + 1
 
-    dispatch(randomIncrementCounter(randomNumber))
+    dispatch({ type: "randomIncrementCounter", payload: randomNumber })
   }
 
 
   return {
-    counter,
+    counter: count,
     increment,
     decrement,
     reset,
