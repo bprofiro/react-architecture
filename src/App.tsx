@@ -1,7 +1,12 @@
+import { Provider } from 'react-redux';
+
+import { Dashboard } from './modules/presentation/pages/Dashboard';
+import { store } from './modules/infrastructure/store';
+
 export const App = () => {
   return (
-    <div>
-      <h1>Hello</h1>
-    </div>
-  )
-}
+    <Provider store={store}>
+      <Dashboard />
+    </Provider>
+  );
+};
